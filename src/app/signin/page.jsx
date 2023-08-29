@@ -6,14 +6,16 @@ import { useRouter } from "next/navigation";
 function Page() {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
   const router = useRouter();
 
   const handleForm = async (event) => {
     event.preventDefault();
-
+    setLoading(true);
     const { result, error } = await signIn(email, password);
-
+    setLoading(false);
     if (error) {
+      alert(error.message);
       return console.log(error);
     }
 
@@ -57,7 +59,7 @@ function Page() {
           type='submit'
           className='font-bold bg-gray-700 rounded px-4 py-2 hover:bg-gray-600'
         >
-          Sign in
+          {loading ? "wait..." : "Sign in"}
         </button>
       </form>
     </div>
