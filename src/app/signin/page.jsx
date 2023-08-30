@@ -2,6 +2,10 @@
 import React from "react";
 import signIn from "../firebase/auth/signin";
 import { useRouter } from "next/navigation";
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import Link from "next/link";
+
+const provider = new GoogleAuthProvider();
 
 function Page() {
   const [email, setEmail] = React.useState("");
@@ -24,11 +28,39 @@ function Page() {
     return router.push("/profile");
   };
 
+  // Function to trigger Google popup login
+  const signInWithGoogle = async () => {
+    const auth = getAuth();
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        // The signed-in user info.
+        const user = result.user;
+        console.log(result);
+        // IdP data available using getAdditionalUserInfo(result)
+        // ...
+      })
+      .catch((error) => {
+        // Handle Errors here.
+
+        console.log(error);
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // The email of the user's account used.
+        const email = error.customData.email;
+        // The AuthCredential type that was used.
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        // ...
+      });
+  };
+
   return (
     <div className='form-wrapper'>
       <form
         onSubmit={handleForm}
-        className='form form min-h-[100vh] gap-5 flex-col items-center justify-center flex p-4'
+        className='form form min-h-[100vh] gap-5 flex-col items-center justify-center flex p-4 w-fit m-auto'
       >
         <h1 className='text-5xl'>Sign in</h1>
         <label htmlFor='email'>
@@ -57,9 +89,26 @@ function Page() {
         </label>
         <button
           type='submit'
-          className='font-bold bg-gray-700 rounded px-4 py-2 hover:bg-gray-600'
+          className='font-bold w-full bg-gray-700 rounded px-4 py-2 hover:bg-gray-600'
         >
           {loading ? "wait..." : "Sign in"}
+        </button>
+
+        <p>
+          <span>Don&apos;t have an account?</span>
+          <Link href='/signup' className='text-blue-800 underline ml-2'>
+            Sign up
+          </Link>
+        </p>
+
+        <p>or</p>
+
+        <button
+          className='border w-full rounded px-4 py-2 border-solid border-white text-[#5a94f5]'
+          type='button'
+          onClick={signInWithGoogle}
+        >
+          Sign in with Google
         </button>
       </form>
     </div>
