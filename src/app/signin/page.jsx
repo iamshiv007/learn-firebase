@@ -18,8 +18,8 @@ function Page() {
     const { result, error } = await signIn(email, password);
     setLoading(false);
     if (error) {
-      alert(error.message);
-      return console.log(error);
+      console.log(error);
+      return alert(error.messgae);
     }
 
     // else successful
@@ -33,7 +33,7 @@ function Page() {
 
     if (error) {
       console.log(error);
-      return alert(error.messgae);
+      return alert(error?.messgae || error?.customData?.email);
     } else {
       console.log(result);
       return router.push("/profile");
@@ -45,7 +45,7 @@ function Page() {
 
     if (error) {
       console.log(error);
-      return alert(error.messgae);
+      return alert(error?.message || error?.customData?.email);
     } else {
       console.log(result);
       return router.push("/profile");

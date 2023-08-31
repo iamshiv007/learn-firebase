@@ -19,7 +19,8 @@ function Page() {
     setLoading(false);
 
     if (error) {
-      return console.log(error);
+      console.log(error);
+      return alert(error.messgae);
     }
 
     // else successful
@@ -28,22 +29,29 @@ function Page() {
   };
 
   const signInWithGoogle = async () => {
-    const { user, errorMessage } = await signinGoogle();
-    if (errorMessage) {
-      alert(errorMessage);
+    const { result, error } = await signinGoogle();
+
+    if (error) {
+      console.log(error);
+      return alert(error?.messgae || error?.customData?.email);
     } else {
-      router.push("/profile");
+      console.log(result);
+      return router.push("/profile");
     }
   };
 
   const signInWithGithub = async () => {
-    const { user, errorMessage } = await signinGithub();
-    if (errorMessage) {
-      alert(errorMessage);
+    const { result, error } = await signinGithub();
+
+    if (error) {
+      console.log(error);
+      return alert(error?.message || error?.customData?.email);
     } else {
-      router.push("/profile");
+      console.log(result);
+      return router.push("/profile");
     }
   };
+
   return (
     <div className='form-wrapper'>
       <form

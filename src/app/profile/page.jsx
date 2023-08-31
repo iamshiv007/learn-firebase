@@ -1,7 +1,6 @@
 "use client";
 import React, { useContext, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
-// import { redirect } from "next/navigation";
 import { signOut, getAuth } from "firebase/auth";
 import firebase_app from "../firebase/config";
 import { useRouter } from "next/navigation";
