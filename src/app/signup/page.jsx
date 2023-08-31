@@ -3,6 +3,8 @@ import React from "react";
 import signUp from "../firebase/auth/signup";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import signinGoogle from "../firebase/auth/signinGoogle";
+import signinGithub from "../firebase/auth/signinGithub";
 
 function Page() {
   const [email, setEmail] = React.useState("");
@@ -26,30 +28,21 @@ function Page() {
   };
 
   const signInWithGoogle = async () => {
-    const auth = getAuth();
-    signInWithPopup(auth, provider)
-      .then((result) => {
-        // This gives you a Google Access Token. You can use it to access the Google API.
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
-        // The signed-in user info.
-        const user = result.user;
-        console.log(result);
-        // IdP data available using getAdditionalUserInfo(result)
-        // ...
-      })
-      .catch((error) => {
-        // Handle Errors here.
+    const { user, errorMessage } = await signinGoogle();
+    if (errorMessage) {
+      alert(errorMessage);
+    } else {
+      router.push("/profile");
+    }
+  };
 
-        console.log(error);
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // The email of the user's account used.
-        const email = error.customData.email;
-        // The AuthCredential type that was used.
-        const credential = GoogleAuthProvider.credentialFromError(error);
-        // ...
-      });
+  const signInWithGithub = async () => {
+    const { user, errorMessage } = await signinGithub();
+    if (errorMessage) {
+      alert(errorMessage);
+    } else {
+      router.push("/profile");
+    }
   };
   return (
     <div className='form-wrapper'>
@@ -106,6 +99,13 @@ function Page() {
           onClick={signInWithGoogle}
         >
           Sign up with Google
+        </button>
+        <button
+          className='border w-full rounded px-4 py-2 border-solid border-white text-[#5a94f5]'
+          type='button'
+          onClick={signInWithGithub}
+        >
+          Sign up with Github
         </button>
       </form>
     </div>

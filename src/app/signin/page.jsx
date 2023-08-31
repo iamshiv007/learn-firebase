@@ -2,10 +2,9 @@
 import React from "react";
 import signIn from "../firebase/auth/signin";
 import { useRouter } from "next/navigation";
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import Link from "next/link";
-
-const provider = new GoogleAuthProvider();
+import signinGoogle from "../firebase/auth/signinGoogle";
+import signinGithub from "../firebase/auth/signinGithub";
 
 function Page() {
   const [email, setEmail] = React.useState("");
@@ -30,30 +29,27 @@ function Page() {
 
   // Function to trigger Google popup login
   const signInWithGoogle = async () => {
-    const auth = getAuth();
-    signInWithPopup(auth, provider)
-      .then((result) => {
-        // This gives you a Google Access Token. You can use it to access the Google API.
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
-        // The signed-in user info.
-        const user = result.user;
-        console.log(result);
-        // IdP data available using getAdditionalUserInfo(result)
-        // ...
-      })
-      .catch((error) => {
-        // Handle Errors here.
+    const { result, error } = await signinGoogle();
 
-        console.log(error);
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // The email of the user's account used.
-        const email = error.customData.email;
-        // The AuthCredential type that was used.
-        const credential = GoogleAuthProvider.credentialFromError(error);
-        // ...
-      });
+    if (error) {
+      console.log(error);
+      return alert(error.messgae);
+    } else {
+      console.log(result);
+      return router.push("/profile");
+    }
+  };
+
+  const signInWithGithub = async () => {
+    const { result, error } = await signinGithub();
+
+    if (error) {
+      console.log(error);
+      return alert(error.messgae);
+    } else {
+      console.log(result);
+      return router.push("/profile");
+    }
   };
 
   return (
@@ -109,6 +105,13 @@ function Page() {
           onClick={signInWithGoogle}
         >
           Sign in with Google
+        </button>
+        <button
+          className='border w-full rounded px-4 py-2 border-solid border-white text-[#5a94f5]'
+          type='button'
+          onClick={signInWithGithub}
+        >
+          Sign in with Github
         </button>
       </form>
     </div>
